@@ -105,8 +105,8 @@ class hadoop::base {
     require => File['root'],
   }
 
-  file { "${hadoop::params::root}/conf/hadoop-site.xml":
-    content => template('hadoop/hadoop-site.xml.erb'),
+  file { "${hadoop::params::root}/conf/core-site.xml":
+    content => template('hadoop/core-site.xml.erb'),
     require => File['root'],
   }
 
