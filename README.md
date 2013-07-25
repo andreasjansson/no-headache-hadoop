@@ -125,3 +125,8 @@ _where_
 To execute an arbitrary Hadoop command:
 
     fab hexec:"COMMAND"
+
+Notes
+-----
+
+The Fabric tasks that creates, terminates, and builds servers is in the [headintheclouds](https://github.com/andreasjansson/head-in-the-clouds) package.
