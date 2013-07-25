@@ -7,17 +7,17 @@ from headintheclouds.tasks import *
 
 @task
 @roles('master')
-def format_hdfs():
+def format():
     hexec('hadoop namenode -format')
 
 @task
 @roles('master')
-def start_hadoop():
+def start():
     hexec('start-all.sh')
 
 @task
 @roles('master')
-def stop_hadoop():
+def stop():
     hexec('start-all.sh')
 
 @task

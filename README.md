@@ -20,33 +20,49 @@ To see the current instance prices:
 
     fab pricing
 
+---
+
 To create new spot instances on EC2:
 
     fab ec2.spot:ROLE,SIZE,PRICE,COUNT
+
+---
 
 To create new on-demand instances on EC2:
 
     fab ec2.create:ROLE,SIZE
 
+---
+
 To create new on-demand instances on Digital Ocean:
 
     fab do.create:ROLE,SIZE
+
+---
 
 To terminate all nodes:
 
     fab terminate
 
+---
+
 To list all nodes:
 
     fab nodes
+
+---
 
 To rename all nodes:
 
     fab rename:NEW_ROLE
 
+---
+
 To SSH into a specific node:
 
     fab -H IP_ADDRESS ssh
+
+---
 
 To rename specific nodes:
 
@@ -62,27 +78,39 @@ You can do this by
     fab rename:slave
     fab -H ONE_SPECIFIC_IP_ADDRESS rename:master
 
+---
+
 To install Hadoop on all nodes:
 
     fab build:init=hadoop.pp
 
 **The Hadoop distribution will be installed in /opt/hadoop**
 
+---
+
 To format the Hadoop namenode:
 
     fab format
+
+---
 
 To start Hadoop:
 
     fab start
 
+---
+
 To upload files to HDFS:
 
     fab dfs_put:LOCAL_PATH,REMOTE_PATH
 
+---
+
 To download files from HDFS:
 
     fab dfs_get:LOCAL_PATH,REMOTE_PATH
+
+---
 
 To start a streaming job:
 
@@ -91,6 +119,8 @@ To start a streaming job:
 _where_
   * `INPUT_PATH` and `OUTPUT_PATH` are both HDFS paths
   * `MAPPER` and `REDUCER` are local paths
+
+---
 
 To execute an arbitrary Hadoop command:
 
