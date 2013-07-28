@@ -1,2 +1,4 @@
 $nodes = loadyaml('/etc/puppet/nodes.yaml')
-include hadoop::base
+require tools
+require python::defaultpackages
+require hadoop
