@@ -10,7 +10,9 @@ define python::install ($package = $title, $provider = 'pip') {
     }
   }
   elsif $provider == 'easy_install' {
-    exec { "easy_install $package": }
+    exec { "easy_install $package": 
+
+    }
   }
 
 }

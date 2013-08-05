@@ -1,11 +1,12 @@
 define util::tarball (
+  $remote_path,
   $download_path,
   $extract_dir,
   $extracted_dir,
   $user = 'root',
   ) {
 
-  $cmd = "wget -O $download_path $extract_dir"
+  $cmd = "wget -O $download_path $remote_path"
 
   exec { $cmd:
     creates => $download_path,

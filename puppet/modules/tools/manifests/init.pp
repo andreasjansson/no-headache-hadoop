@@ -7,4 +7,9 @@ class tools {
   package { 'emacs24-nox':
     ensure => present,
   }
+
+  package { 'rlwrap':
+    ensure => present,
+  }
+  
 }

@@ -5,10 +5,12 @@ import fabric.api as fab
 import urlparse
 import re
 
+env.name_prefix = 'NHH-'
+
+from headintheclouds.util import autodoc
 from headintheclouds import ec2
 #from headintheclouds import do
 from headintheclouds.tasks import *
-import headintheclouds.tasks as tasks
 
 @task
 @roles('master')
@@ -33,6 +35,7 @@ def restart():
 
 @task
 @roles('master')
+@autodoc
 def put(local_path, hdfs_path):
     local_path = os.path.expanduser(local_path)
     tmp_path = '/tmp/' + os.path.basename(hdfs_path)
@@ -41,6 +44,7 @@ def put(local_path, hdfs_path):
 
 @task
 @roles('master')
+@autodoc
 def get(hdfs_path, local_path='./'):
     local_path = os.path.expanduser(local_path)
     tmp_path = '/tmp/' + re.sub(r'[^a-z0-9]', '-', hdfs_path.lower().strip('/'))
@@ -50,11 +54,13 @@ def get(hdfs_path, local_path='./'):
 
 @task
 @roles('master')
+@autodoc
 def ls(hdfs_path='/hadoop'):
     hexec('hadoop dfs -ls "%s"' % hdfs_path)
 
 @task
 @roles('master')
+@autodoc
 def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nreducers=None):
     mapper = os.path.expanduser(mapper)
     if reducer:
@@ -89,7 +95,6 @@ def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nred
 
 @task
 @roles('master')
+@autodoc
 def hexec(command):
     sudo('/opt/hadoop/bin/%s' % command, user='hadoop', shell=False)
-
-

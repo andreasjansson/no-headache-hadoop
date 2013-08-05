@@ -3,10 +3,10 @@ class hadoop {
   Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
   File { owner => 'hadoop', }
 
-  $remote_path = 'http://apache.mirror.anlx.net/hadoop/common/hadoop-1.1.2/hadoop-1.1.2.tar.gz'
-  $download_path = '/tmp/hadoop-1.1.2.tar.gz'
+  $remote_path = 'http://apache.mirror.anlx.net/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz'
+  $download_path = '/tmp/hadoop-1.2.1.tar.gz'
   $extract_dir = '/opt'
-  $real_root = '/opt/hadoop-1.1.2'
+  $real_root = '/opt/hadoop-1.2.1'
   $root = '/opt/hadoop'
 
   user { 'hadoop':
@@ -84,6 +84,7 @@ class hadoop {
   }
 
   util::tarball { 'hadoop':
+    remote_path => $remote_path,
     download_path => $download_path,
     extract_dir => $extract_dir,
     extracted_dir => $real_root,
@@ -130,4 +131,5 @@ class hadoop {
     content => template('hadoop/mapred-site.xml.erb'),
     require => File[$root],
   }
+
 }
