@@ -1,0 +1,60 @@
+{
+  "checksums": {
+    "templates/interface.conf.erb": "e68c4aeeb353adef27c559ddf06f0d7f",
+    "tests/plugins/iptables.pp": "86a7da93c9f9dc0b46672d71f3399358",
+    "README.md": "3396a955821f99245eaf67c358d31cc9",
+    "Modulefile": "4f2024be70f9338a0f4693806710d0f1",
+    "templates/mysql.conf.erb": "420d496f20fc8ca81d2d43da2b1c62e3",
+    "manifests/plugin/irq.pp": "03be5658d98ec9638df66ab7d07d1afe",
+    "templates/df.conf.erb": "dec5ff95e8a7c8c972b95b37e9fc930e",
+    "templates/openvpn.conf.erb": "ce67a6f4fba4ac180c1fb00348c2e98a",
+    "templates/write_graphite.conf.erb": "eb2bc771e41989ff584441eebabe4a5d",
+    "tests/purge_config.pp": "65c180c3c52a7b02d674f4511a79e797",
+    "manifests/plugin/interface.pp": "2a72b5c73318d721c7a8319ea7ba1cf9",
+    "manifests/plugin/disk.pp": "938bc132e5218c3348f06c1c8d2e69e5",
+    "tests/plugins/mysql.pp": "da0cd71d4a7c38607d61c073a9ce8102",
+    "tests/plugins/openvpn.pp": "00e965a63e337f47a7f51bdc62f109bb",
+    "tests/plugins/graphite.pp": "04beffa45394cd0741e6ce8ebefb1100",
+    "tests/plugin.pp": "aed9924797968d234372f57c34034833",
+    "templates/collectd.conf.erb": "35e71466b7e8e21baff2427a868da738",
+    "manifests/plugin/iptables.pp": "e426862c679d0b4ae5c6f8ca91ee4c25",
+    "manifests/plugin/openvpn.pp": "e2e84d98232dbb9c49e32f8e0d192383",
+    "tests/plugins/disk.pp": "a181e293d03cd36792a8e30671b43445",
+    "LICENSE": "03ff50a0bc4a15eb462d4129e89f9656",
+    "templates/iptables.conf.erb": "4e839301a1c507a1af8ff2fc3d538274",
+    "manifests/plugin/df.pp": "883c900f0cd9b18b5caa0f9228d0458a",
+    "tests/plugins/irq.pp": "7cc68adde677f27cb74c144272789a38",
+    "manifests/plugin/write_graphite.pp": "418615453c02dfdb2dc38d04f4f71630",
+    "manifests/plugin/syslog.pp": "2dcb1158ee12d353c39780d80eb569da",
+    "tests/purge.pp": "afc24de20e496a4b6d1d5709f70b702d",
+    "tests/plugins/interface.pp": "4f0bf852d7fee0f60c91e3e2c96d1e31",
+    "CHANGELOG": "d152a10dc8f08b78633ef72ba940909b",
+    "manifests/plugin/mysql.pp": "60e1c075f30d60e01488873c2ded27b8",
+    "manifests/init.pp": "849d7f0a455b26f5b50b40896b71c1ec",
+    "manifests/plugin.pp": "6655b151fe8cfac154678efb2fa4da32",
+    "manifests/params.pp": "8e95360458f3c340b21c64202037083e",
+    "tests/plugins/syslog.pp": "881f0e9e75dd105fed3f7e3f33dad00e",
+    "tests/plugins/df.pp": "dfb7f00b9cb184d5b6f388ff128d974b",
+    "tests/init.pp": "0d8bce20cddf86296ccf997b87d21014",
+    "templates/syslog.conf.erb": "f68870203431c0c89c10bb0b32bd1f1f",
+    "templates/irq.conf.erb": "2af2b6a41e833f8ccc476bcd49aaa306",
+    "templates/disk.conf.erb": "65710ce265bf32002d62628660ee4dd8"
+  },
+  "license": "Apache License 2.0",
+  "author": "Computer Action Team",
+  "source": "https://github.com/pdxcat/puppet-module-collectd",
+  "project_page": "https://github.com/pdxcat/puppet-module-collectd",
+  "types": [
+
+  ],
+  "description": "Collectd Module for Puppet",
+  "dependencies": [
+    {
+      "version_requirement": ">=2.0.0",
+      "name": "puppetlabs/stdlib"
+    }
+  ],
+  "name": "pdxcat-collectd",
+  "summary": "Collectd Module for Puppet",
+  "version": "0.0.3"
+}

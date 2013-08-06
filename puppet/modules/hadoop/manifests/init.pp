@@ -103,7 +103,7 @@ class hadoop {
   }
 
   file { "$root/conf/hadoop-env.sh":
-    source => 'puppet:///modules/hadoop/hadoop-env.sh',
+    content => template('hadoop/hadoop-env.sh.erb'),
     require => File[$root],
   }
 
@@ -130,6 +130,10 @@ class hadoop {
   file { "$root/conf/mapred-site.xml":
     content => template('hadoop/mapred-site.xml.erb'),
     require => File[$root],
+  }
+
+  file { '/etc/profile.d/hadoop_env.sh':
+    content => template('hadoop/hadoop-env.sh.erb'),
   }
 
 }

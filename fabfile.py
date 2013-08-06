@@ -4,6 +4,7 @@ from fabric.api import *
 import fabric.api as fab
 import urlparse
 import re
+import shlex
 
 env.name_prefix = 'NHH-'
 
@@ -61,10 +62,28 @@ def ls(hdfs_path='/hadoop'):
 @task
 @roles('master')
 @autodoc
+def tail(hdfs_path):
+    hexec('hadoop dfs -tail "%s"' % hdfs_path)
+
+@task
+@roles('master')
+@autodoc
 def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nreducers=None):
-    mapper = os.path.expanduser(mapper)
+    parts = shlex.split(mapper, 1)
+    mapper_command = parts[0]
+    if len(parts) > 1:
+        mapper_args = parts[1]
+    else:
+        mapper_args = ''
+    mapper = os.path.expanduser(mapper_command)
     if reducer:
-        reducer = os.path.expanduser(reducer)
+        parts = shlex.split(reducer, 1)
+        reducer_command = parts[0]
+        if len(parts) > 1:
+            reducer_args = parts[1]
+        else:
+            reducer_args = ''
+        reducer = os.path.expanduser(reducer_command)
     else:
         nreducers = 0
 
@@ -82,16 +101,16 @@ def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nred
 
     mapper_path = '%s/%s' % (dir, os.path.basename(mapper))
     fab.put(mapper, mapper_path, use_sudo=True)
-    opts.append('-mapper "%s"' % mapper_path)
+    opts.append('-mapper "%s %s"' % (mapper_path, mapper_args))
     opts.append('-file "%s"' % mapper_path)
 
     if reducer:
         reducer_path = '%s/%s' % (dir, os.path.basename(reducer))
         fab.put(reducer, reducer_path, use_sudo=True)
-        opts.append('-reducer "%s"' % reducer_path)
+        opts.append('-reducer "%s %s"' % (reducer_path, reducer_args))
         opts.append('-file "%s"' % reducer_path)
 
-    hexec('hadoop jar /opt/hadoop/contrib/streaming/hadoop-streaming-1.1.2.jar %s' % ' '.join(opts))
+    hexec('hadoop jar /opt/hadoop/contrib/streaming/hadoop-streaming-1.2.1.jar %s' % ' '.join(opts))
 
 @task
 @roles('master')

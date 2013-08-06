@@ -25,8 +25,4 @@ class pig {
     require => Util::Tarball['pig'],
   }
   
-  file { '/etc/profile.d/pig_env.sh':
-    source => 'puppet:///modules/pig/pig_env.sh',
-  }
-
 }

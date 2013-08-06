@@ -1,0 +1,39 @@
+{
+  "name": "garethr-graphite",
+  "version": "0.1.0",
+  "source": "UNKNOWN",
+  "author": "garethr",
+  "license": "Apache License, Version 2.0",
+  "summary": "Module to manage the Graphite monitoring tool",
+  "description": "UNKNOWN",
+  "project_page": "https://github.com/garethr/garethr-graphite",
+  "dependencies": [
+    {
+      "name": "puppetlabs/apache"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "Gemfile": "84708ea1c9b80130a40fde87376882b9",
+    "Gemfile.lock": "c2cd23342abc2b1e207e7c5d32cb3c06",
+    "LICENSE": "47bbee59c4c1cb14cc3667035a227be0",
+    "Modulefile": "044632f3f4daefc2c621a610bb2d0abc",
+    "README.md": "7493eeadd164021d33b181c8c378f4e2",
+    "Rakefile": "c6a91ef43608c5d4b22bc7e50a94d6a5",
+    "files/carbon.conf": "1c3c4644f50136bc8c70dbf2816e3a82",
+    "files/local_settings.py": "aba28c147f4c863c874f890f4c2eda8f",
+    "files/storage-schemas.conf": "29d49e9b037f18f81ec04c81a4114918",
+    "manifests/config.pp": "588687d45ecc2965ba5549f66e0e7707",
+    "manifests/init.pp": "da042afa1ce562a15ff61a96e2dfc7d1",
+    "manifests/install.pp": "8f490654b6e573b00c0875ad32068a42",
+    "manifests/params.pp": "4b0fbd0c2dd439ad8f45d7c27c8b8793",
+    "manifests/service.pp": "63f3f7cf9198f5963b18a152ab4f2e98",
+    "spec/classes/graphite/graphite_spec.rb": "40aa44392574401b5a8207d10c574bf3",
+    "spec/spec_helper.rb": "0db89c9a486df193c0e40095422e19dc",
+    "templates/carbon.conf": "ee1d38544e5bdf4670415205e71a7e0e",
+    "templates/initial_data.json": "d4eea140fe3a6f7609b7b571a401c2f5",
+    "templates/virtualhost.conf": "476d544da342fc6cfa01d6f75f3eb678"
+  }
+}
