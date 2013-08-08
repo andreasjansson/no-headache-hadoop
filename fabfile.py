@@ -14,6 +14,21 @@ from headintheclouds import ec2
 from headintheclouds.tasks import *
 
 @task
+@parallel
+def build(update=True):
+    role_manifests = {
+        'master': 'hadoop.pp',
+        'slave': 'hadoop.pp',
+        'monitoring': 'monitoring.pp'
+    }
+
+    role = env.role
+    if role not in role_manifests:
+        abort('%s is not in the set of recognised roles (%s)' % (role, ', '.join(role_manifests.keys())))
+
+    puppet(role_manifests[role], update=update)
+    
+@task
 @roles('master')
 def format():
     hexec('hadoop namenode -format')
@@ -117,3 +132,4 @@ def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nred
 @autodoc
 def hexec(command):
     sudo('/opt/hadoop/bin/%s' % command, user='hadoop', shell=False)
+

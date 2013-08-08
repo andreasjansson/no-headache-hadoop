@@ -15,14 +15,14 @@ class graphite::install {
     ensure => latest;
   }
 
-  exec { 'install-carbon':
-    command => 'pip install carbon',
-    creates => '/opt/graphite/lib/carbon',
+  package { 'carbon':
+    ensure => installed,
+    provider => pip,
   }
 
-  exec { 'install-graphite-web':
-    command => 'pip install graphite-web',
-    creates => '/opt/graphite/webapp/graphite',
+  package { 'graphite-web':
+    ensure => installed,
+    provider => pip,
   }
 
   package { 'whisper':

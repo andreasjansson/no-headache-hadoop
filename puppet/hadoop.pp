@@ -4,5 +4,5 @@ require python::defaultpackages
 require hadoop
 
 if $nodes['monitoring'] {
-  require monitoring
+  require monitoring::agent
 }

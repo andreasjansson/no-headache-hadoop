@@ -19,16 +19,17 @@ class hadoop {
     ensure => directory,
   }
 
-  file { '/mnt':
-    ensure => directory,
-  }
-
-  file { '/mnt/lost+found':
-    ensure => absent,
-    force => true,
-  }
-
   if $cloud == 'Amazon EC2' {
+    file { '/mnt':
+      ensure => directory,
+    }
+
+    file { '/mnt/lost+found':
+      ensure => absent,
+      force => true,
+    }
+
+    
     file { '/home/hadoop/dfs':
       ensure => 'link',
       target => '/mnt',

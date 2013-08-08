@@ -26,9 +26,39 @@ class graphite::config {
     source    => 'puppet:///modules/graphite/storage-schemas.conf',
   }
 
-  file { ['/opt/graphite/storage', '/opt/graphite/storage/whisper']:
+  if $cloud == 'Amazon EC2' {
+    file { '/mnt':
+      ensure => directory,
+      owner     => 'www-data',
+      mode      => '0775',
+    }
+
+    file { '/mnt/lost+found':
+      ensure => absent,
+      force => true,
+    }
+
+    
+    file { '/opt/graphite/storage':
+      force => true,
+      ensure => 'link',
+      target => '/mnt',
+      require => File['/mnt'],
+      owner     => 'www-data',
+      mode      => '0775',
+    }
+  }
+  else {
+    file { '/opt/graphite/storage':
+      owner     => 'www-data',
+      mode      => '0775',
+    }
+  }
+
+  file { '/opt/graphite/storage/whisper':
     owner     => 'www-data',
     mode      => '0775',
+    require => File['/opt/graphite/storage'],
   }
 
   exec { 'init-db':
@@ -36,7 +66,8 @@ class graphite::config {
     cwd       => '/opt/graphite/webapp/graphite',
     creates   => '/opt/graphite/storage/graphite.db',
     subscribe => File['/opt/graphite/storage'],
-    require   => File['/opt/graphite/webapp/graphite/initial_data.json'],
+    require   => [ File['/opt/graphite/webapp/graphite/initial_data.json'],
+                   File['/opt/graphite/webapp/graphite/local_settings.py'], ],
   }
 
   file { '/opt/graphite/webapp/graphite/initial_data.json':
@@ -49,13 +80,23 @@ class graphite::config {
     owner     => 'www-data',
     mode      => '0664',
     subscribe => Exec['init-db'],
+    require => File['/opt/graphite/storage'],
   }
 
-  file { '/opt/graphite/storage/log/webapp/':
+  file { '/opt/graphite/storage/log':
     ensure    => 'directory',
     owner     => 'www-data',
     mode      => '0775',
-    subscribe => Exec['install-graphite-web'],
+    subscribe => Package['graphite-web'],
+    require => File['/opt/graphite/storage'],
+  }
+
+  file { '/opt/graphite/storage/log/webapp':
+    ensure    => 'directory',
+    owner     => 'www-data',
+    mode      => '0775',
+    subscribe => Package['graphite-web'],
+    require => File['/opt/graphite/storage/log'],
   }
 
   file { '/opt/graphite/webapp/graphite/local_settings.py':
@@ -72,6 +113,7 @@ class graphite::config {
     template => 'graphite/virtualhost.conf',
     docroot  => '/opt/graphite/webapp',
     logroot  => '/opt/graphite/storage/log/webapp/',
+    require => File['/opt/graphite/storage'],
   }
 
 }

@@ -31,7 +31,7 @@ define apt::ppa(
     creates   => "${sources_list_d}/${sources_list_d_filename}",
     logoutput => 'on_failure',
     require   => [
-      File[$sources_list_d],
+#      File[$sources_list_d],
       Package["${package}"],
     ],
     notify    => Exec['apt_update'],
