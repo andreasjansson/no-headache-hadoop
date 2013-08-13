@@ -61,18 +61,34 @@ def put(local_path, hdfs_path):
 @task
 @roles('master')
 @autodoc
-def get(hdfs_path, local_path='./'):
+def get(hdfs_path, local_path='./', gzip=True):
     local_path = os.path.expanduser(local_path)
-    tmp_path = '/tmp/' + re.sub(r'[^a-z0-9]', '-', hdfs_path.lower().strip('/'))
-    sudo('mkdir %s | true' % tmp_path, user='hadoop', shell=False)
-    hexec('hadoop dfs -get "%s" "%s"' % (hdfs_path, tmp_path))
-    fab.get(tmp_path, local_path)
+    basename = os.path.basename(local_path)
+    if not basename:
+        basename = hdfs_path.lower().strip('/').split('/')[-1]
+        local_path = os.path.dirname(local_path) + '/' + basename
+    tmp_path = re.sub(r'[^a-z0-9]', '-', basename)
+    local_zip_path = local_path + '.tar.gz'
+    tmp_zip_path = tmp_path + '.tar.gz'
+    sudo('rm -rf "/tmp/%s"' % tmp_path)
+    sudo('mkdir "/tmp/%s"' % tmp_path, user='hadoop', shell=False)
+    hexec('hadoop dfs -get "%s" "/tmp/%s"' % (hdfs_path, tmp_path))
+    sudo('cd /tmp; tar czvf "%s" "%s"' % (tmp_zip_path, tmp_path))
+    fab.get('/tmp/' + tmp_zip_path, local_zip_path)
+    local('tar xzvf "%s"' % (local_zip_path))
 
 @task
 @roles('master')
 @autodoc
 def ls(hdfs_path='/hadoop'):
     hexec('hadoop dfs -ls "%s"' % hdfs_path)
+
+@task
+@roles('master')
+@autodoc
+def combine(from_hdfs_path, to_hdfs_path):
+    sudo('hadoop dfs -cat "%s" | hadoop dfs -put - "%s"' % (from_hdfs_path, to_hdfs_path),
+         user='hadoop', shell=True)
 
 @task
 @roles('master')
