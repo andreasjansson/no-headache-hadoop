@@ -9,8 +9,16 @@ import shlex
 env.name_prefix = 'NHH-'
 
 from headintheclouds.util import autodoc
-from headintheclouds import ec2
-#from headintheclouds import do
+try:
+    from headintheclouds import ec2
+except Exception:
+    pass
+
+try:
+    from headintheclouds import do
+except Exception:
+    pass
+
 from headintheclouds.tasks import *
 
 @task
