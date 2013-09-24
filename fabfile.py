@@ -9,17 +9,40 @@ import shlex
 env.name_prefix = 'NHH-'
 
 from headintheclouds.util import autodoc
+
+_ec2_import_exception = None
 try:
     from headintheclouds import ec2
-except Exception:
-    pass
+except Exception, e:
+    _ec2_import_exception = e
 
+_do_import_exception = None
 try:
     from headintheclouds import do
-except Exception:
-    pass
+except Exception, e:
+    _do_import_exception = e
 
 from headintheclouds.tasks import *
+
+@fab.task
+@runs_once
+def debug_ec2():
+    if _ec2_import_exception:
+        print 'Failed to connect to Amazon EC2'
+        print ''
+        print str(_ec2_import_exception)
+    else:
+        print 'Successfully connected to EC2'
+
+@fab.task
+@runs_once
+def debug_do():
+    if _do_import_exception:
+        print 'Failed to connect to Digital Ocean'
+        print ''
+        print str(_do_import_exception)
+    else:
+        print 'Successfully connected to Digital Ocean'
 
 @task
 @parallel
@@ -60,34 +83,6 @@ def restart():
 @task
 @roles('master')
 @autodoc
-def put(local_path, hdfs_path):
-    local_path = os.path.expanduser(local_path)
-    tmp_path = '/tmp/' + os.path.basename(hdfs_path)
-    fab.put(local_path, tmp_path)
-    hexec('hadoop dfs -moveFromLocal "%s" "%s"' % (tmp_path, hdfs_path))
-
-@task
-@roles('master')
-@autodoc
-def get(hdfs_path, local_path='./', gzip=True):
-    local_path = os.path.expanduser(local_path)
-    basename = os.path.basename(local_path)
-    if not basename:
-        basename = hdfs_path.lower().strip('/').split('/')[-1]
-        local_path = os.path.dirname(local_path) + '/' + basename
-    tmp_path = re.sub(r'[^a-z0-9]', '-', basename)
-    local_zip_path = local_path + '.tar.gz'
-    tmp_zip_path = tmp_path + '.tar.gz'
-    sudo('rm -rf "/tmp/%s"' % tmp_path)
-    sudo('mkdir "/tmp/%s"' % tmp_path, user='hadoop', shell=False)
-    hexec('hadoop dfs -get "%s" "/tmp/%s"' % (hdfs_path, tmp_path))
-    sudo('cd /tmp; tar czvf "%s" "%s"' % (tmp_zip_path, tmp_path))
-    fab.get('/tmp/' + tmp_zip_path, local_zip_path)
-    local('tar xzvf "%s"' % (local_zip_path))
-
-@task
-@roles('master')
-@autodoc
 def ls(hdfs_path='/hadoop'):
     hexec('hadoop dfs -ls "%s"' % hdfs_path)
 
@@ -97,6 +92,12 @@ def ls(hdfs_path='/hadoop'):
 def combine(from_hdfs_path, to_hdfs_path):
     sudo('hadoop dfs -cat "%s" | hadoop dfs -put - "%s"' % (from_hdfs_path, to_hdfs_path),
          user='hadoop', shell=True)
+
+@task
+@roles('master')
+@autodoc
+def head(hdfs_path, n=20):
+    hexec('hadoop dfs -cat "%s" | head -n%d' % (hdfs_path, int(n)))
 
 @task
 @roles('master')
@@ -139,13 +140,13 @@ def streaming(input_path, output_path, mapper, reducer=None, nmappers=None, nred
     sudo('mkdir "%s" || true' % dir, user='hadoop', shell=False)
 
     mapper_path = '%s/%s' % (dir, os.path.basename(mapper))
-    fab.put(mapper, mapper_path, use_sudo=True)
+    put(mapper, mapper_path, use_sudo=True)
     opts.append('-mapper "%s %s"' % (mapper_path, mapper_args))
     opts.append('-file "%s"' % mapper_path)
 
     if reducer:
         reducer_path = '%s/%s' % (dir, os.path.basename(reducer))
-        fab.put(reducer, reducer_path, use_sudo=True)
+        put(reducer, reducer_path, use_sudo=True)
         opts.append('-reducer "%s %s"' % (reducer_path, reducer_args))
         opts.append('-file "%s"' % reducer_path)
 
