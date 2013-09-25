@@ -245,7 +245,7 @@ Now that we have our cluster built and configured, we can start doing some actua
 
 ### Algorithm overview
 
-In frequent itemset mining we aim to find subsets of items that occur in many transations. The classic example is market basket analysis, where we want to find products that are frequently bought together. In this example we want to find sets of artists that occur in many people's Last.fm listening histories. The output will be a number of sets of artists, e.g.
+In frequent itemset mining we aim to find subsets of items that occur in many transactions. The classic example is market basket analysis, where we want to find products that are frequently bought together. In this example we want to find sets of artists that occur in many people's Last.fm listening histories. The output will be a number of sets of artists, e.g.
 
     {{Metallica, Pantera, Iron Maiden},
      {DJ Slugo, Drexciya},
