@@ -1,1 +1,15 @@
+pygments: true
+title: blah
+permalink: /news/:year/:month/:day/:title
+
+author :
+  name : Andreas Jansson
+  email : andreas.s.t.jansson@gmail.com
+  github : andreasjansson
+  twitter : ndreasa
+
+project:
+  name: OWNER
+  github: owner
+
 markdown: redcarpet

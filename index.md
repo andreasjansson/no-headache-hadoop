@@ -1,6 +1,8 @@
 ---
 layout: index
 ---
+{% raw %}
+
 ## Introduction
 
 This is a tutorial that describes a way to quickly setup a Hadoop cluster on cheap Amazon EC2 spot instances. We then show how to interact with the cluster by writing and running a few example Hadoop streaming jobs in Python.
@@ -501,13 +503,13 @@ Note that the mapper takes hdfs:///hadoop/lastfm/groups.tsv as an argument. Also
 
 This job takes longer to run than the other jobs, simply because it's doing a lot more work. To get a sense of what's happening, open the job tracker interface and the monitoring server Graphite interface in a browser. The memory usage is especially interesting. Here is a screenshot of the memory consumption on a slave node while running the reducer
 
-![fpgrowth memory](fpgrowth_memory.png)
+![fpgrowth memory](images/fpgrowth_memory.png)
 
 (To see the output stacked, click Graph Options -> Area Mode -> Stacked. To select a specific time range, click the white-ish icon with a green arrow next to the thing that sort of looks like a calendar. Good web developers aren't always good designers...)
 
 To follow progress in the Hadoop web interface, have a look at the Reduce input records vs. Map output records.
 
-![reduce progress](reduce_progress.png)
+![reduce progress](images/reduce_progress.png)
 
 Here the job has been running for around 10 minutes and processed 1.2M out of 13M records, so we could expect the job to run for around 2 hours.
 
@@ -519,3 +521,5 @@ Here the job has been running for around 10 minutes and processed 1.2M out of 13
 ## Where to go from here
 
 for no-headache-hadoop, install new software through puppet (especially python libs), etc.
+
+{% endraw %}
