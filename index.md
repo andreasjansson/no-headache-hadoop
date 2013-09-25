@@ -583,15 +583,15 @@ In the [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mini
 
 Here are some other random things to read:
 
- * http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/
- * http://whyjava.wordpress.com/2011/08/04/how-i-explained-mapreduce-to-my-wife/
- * http://hadoop.apache.org/docs/stable/mapred_tutorial.html
- * http://mahout.apache.org/
- * http://pig.apache.org/
- * http://www.quora.com/What-are-some-promising-open-source-alternatives-to-Hadoop-MapReduce-for-map-reduce
- * http://storm-project.net/
- * http://spark.incubator.apache.org/
- * http://star.mit.edu/cluster/
+ * [http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/](http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/)
+ * [http://whyjava.wordpress.com/2011/08/04/how-i-explained-mapreduce-to-my-wife/](http://whyjava.wordpress.com/2011/08/04/how-i-explained-mapreduce-to-my-wife/)
+ * [http://hadoop.apache.org/docs/stable/mapred_tutorial.html](http://hadoop.apache.org/docs/stable/mapred_tutorial.html)
+ * [http://mahout.apache.org/](http://mahout.apache.org/)
+ * [http://pig.apache.org/](http://pig.apache.org/)
+ * [http://www.quora.com/What-are-some-promising-open-source-alternatives-to-Hadoop-MapReduce-for-map-reduce](http://www.quora.com/What-are-some-promising-open-source-alternatives-to-Hadoop-MapReduce-for-map-reduce)
+ * [http://storm-project.net/](http://storm-project.net/)
+ * [http://spark.incubator.apache.org/](http://spark.incubator.apache.org/)
+ * [http://star.mit.edu/cluster/](http://star.mit.edu/cluster/)
 
 ----
 
