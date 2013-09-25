@@ -17,11 +17,19 @@ Most of the code is written in Python (version 2.7), so if you've never used it 
 
 ## Initial setup
 
-Make sure you have Python 2.7 [installed](https://wiki.python.org/moin/BeginnersGuide/Download). You'll also need [pip](http://blog.troygrosfield.com/2010/12/18/installing-easy_install-and-pip-for-python/) (recommended) or easy_install to download Python packages.
+Make sure you have Python 2.7 [installed](https://wiki.python.org/moin/BeginnersGuide/Download). You'll also need [pip](http://blog.troygrosfield.com/2010/12/18/installing-easy_install-and-pip-for-python/) (recommended) or easy_install to download Python packages. The examples assume you're running `bash` as your command line.
 
 Download [headintheclouds](https://github.com/andreasjansson/head-in-the-clouds) (a tool for managing cloud servers):
 
     pip install headintheclouds
+
+If you don't have root access, and you don't have pip installed, you can install the package by typing
+
+    export PYTHONPATH=$PYTHONPATH:$HOME/local/lib/python2.7/site-packages
+    export $PATH=$PATH:$HOME/local/bin
+    easy_install --prefix=$HOME/local headintheclouds
+
+(You might want to put the `export` statements in your .bashrc or equivalent file.)
 
 Download and unzip [no-headache-hadoop](https://github.com/andreasjansson/no-headache-hadoop) (a set of scripts that makes installing and configuring Hadoop easy):
 
