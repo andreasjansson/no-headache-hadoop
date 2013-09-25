@@ -26,7 +26,7 @@ Download [headintheclouds](https://github.com/andreasjansson/head-in-the-clouds)
 If you don't have root access, and you don't have pip installed, you can install the package by typing
 
     export PYTHONPATH=$PYTHONPATH:$HOME/local/lib/python2.7/site-packages
-    export $PATH=$PATH:$HOME/local/bin
+    export PATH=$PATH:$HOME/local/bin
     easy_install --prefix=$HOME/local headintheclouds
 
 (You might want to put the `export` statements in your .bashrc or equivalent file.)
