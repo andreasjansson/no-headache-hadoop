@@ -89,13 +89,6 @@ def ls(hdfs_path='/hadoop'):
 @task
 @roles('master')
 @autodoc
-def combine(from_hdfs_path, to_hdfs_path):
-    sudo('hadoop dfs -cat "%s" | hadoop dfs -put - "%s"' % (from_hdfs_path, to_hdfs_path),
-         user='hadoop', shell=True)
-
-@task
-@roles('master')
-@autodoc
 def head(hdfs_path, n=20):
     hexec('hadoop dfs -cat "%s" | head -n%d' % (hdfs_path, int(n)))
 
@@ -104,6 +97,18 @@ def head(hdfs_path, n=20):
 @autodoc
 def tail(hdfs_path):
     hexec('hadoop dfs -tail "%s"' % hdfs_path)
+
+@task
+@roles('master')
+@autodoc
+def hdfs_download(hdfs_path, local_path):
+    local_gz_path = local_path + '.gz'
+    tmp_path = '/tmp/' + str(uuid.uuid4())
+    tmp_gz_path = tmp_path + '.gz'
+    hexec('hadoop dfs -getmerge %s %s' % (hdfs_path, tmp_path))
+    sudo('gzip -S .gz %s' % (tmp_path))
+    get(tmp_gz_path, local_gz_path)
+    local('gunzip -f %s' % (local_gz_path))
 
 @task
 @roles('master')
