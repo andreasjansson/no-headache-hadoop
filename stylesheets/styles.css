@@ -93,7 +93,12 @@ th {
   color:#444;
 }
 
-img {
+header img {
+    display: block;
+    float: right;
+}
+
+#content img {
   max-width:100%;
   max-height: 300px;
   -o-box-shadow:      0px 0px 29px #888;

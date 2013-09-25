@@ -453,7 +453,7 @@ Which will output
 
 ### Step 2/5: Counting
 
-Next we'll count the support of each artist. As input to this job we'll take the preprocessed output from the previous job. The [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/count/mapper.py) simply emits a `1` for each artist in each listening history. The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/count/reducer.py) sums the counts for each artist.
+Next we'll count the support of each artist. As input to this job we'll take the preprocessed output from the previous job. The [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/count/mapper.py) simply emits a `1` for each artist in each listening history. The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/count/reducer.py) sums the counts for each artist. We also prune the result set to remove any artists with support less than 500, so that the following steps will be faster.
 
 To run this job, we type
 
@@ -463,7 +463,7 @@ This will output tuples in the form (artist name, count).
 
 ### Step 3/5: Sharding artists
 
-We'll shard the artists into 100 groups. The input to this step is the artist counts from the previous step. The [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/group/mapper.py) reads a row of (artist, count) and outputs (shard number, artist:count), where shard number is a random integer 0 <= x <= 99. The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/group/reducer.py) groups the records by shard number into (shard number, artist1:count1, artist2:count2, ...).
+We'll shard the artists into 1000 groups. The input to this step is the artist counts from the previous step. The [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/group/mapper.py) reads a row of (artist, count) and outputs (shard number, artist:count), where shard number is a random integer 0 <= x <= 99. The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/group/reducer.py) groups the records by shard number into (shard number, artist1:count1, artist2:count2, ...).
 
 Run the job with
 
@@ -491,7 +491,7 @@ This should output `100`.
 
 The [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/fpgrowth/mapper.py) for this job is more complicated than the ones we've seen before. First we read list of sharded artist groups straight from HDFS (we provide the path to groups.tsv as a command line argument to the mapper). We then output the set of artists in the record once for each unique artist shard number (with a sublist optimisation, described in [the paper](http://infolab.stanford.edu/~echang/recsys08-69.pdf)). The output is in the form (shard number, artist1, artist2, ...).
 
-The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/fpgrowth/reducer.py) is even more complicated, but you don't need to understand the exact details of what it's doing for this tutorial (unless you want to). For each artist shard, we compute the frequent itemsets (with a minimum support threshold of 50) and output them in serialized [JSON](http://www.json.org/) format. When the data gets sufficiently complicated, it is often useful to use a more expressive format than tab-separated strings used by default by Hadoop. However, since a JSON object is itself a string, we can still use it as a value in Hadoop streaming.
+The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/fpgrowth/reducer.py) is even more complicated, but you don't need to understand the exact details of what it's doing for this tutorial (unless you want to). For each artist shard, we compute the frequent itemsets (with a minimum support threshold of 500) and output them in serialized [JSON](http://www.json.org/) format. When the data gets sufficiently complicated, it is often useful to use a more expressive format than tab-separated strings used by default by Hadoop. However, since a JSON object is itself a string, we can still use it as a value in Hadoop streaming.
 
 Notice that the key we output is the string `_` (underscore).This is an idiom for when we don't need a key. In this case, all we need are the patterns themselves.
 
@@ -499,7 +499,7 @@ So to launch this behemoth of a map/reduce job, type
 
     fab streaming:/hadoop/lastfm/preprocessed/part-*,/hadoop/lastfm/mined,"/path/to/pfp_lastfm360k/fpgrowth/mapper.py hdfs:///hadoop/lastfm/groups.tsv",/path/to/projects/pfp_lastfm360k/fpgrowth/reducer.py,20,10
 
-Note that the mapper takes hdfs:///hadoop/lastfm/groups.tsv as an argument. Also note that we're only running 10 reducers in this job, one per node. This is because the reduce step is very memory intensive, and will fail if memory runs out.
+Note that the mapper takes hdfs:///hadoop/lastfm/groups.tsv as an argument.
 
 This job takes longer to run than the other jobs, simply because it's doing a lot more work. To get a sense of what's happening, open the job tracker interface and the monitoring server Graphite interface in a browser. The memory usage is especially interesting. Here is a screenshot of the memory consumption on a slave node while running the reducer
 
@@ -511,15 +511,73 @@ To follow progress in the Hadoop web interface, have a look at the Reduce input 
 
 ![reduce progress](images/reduce_progress.png)
 
-Here the job has been running for around 10 minutes and processed 1.2M out of 13M records, so we could expect the job to run for around 2 hours.
+Here the job has been running for 29 minutes and processed 6.3M out of 12.3M records, so we could expect the job to run for around about an hour.
 
 ### Step 5/5: Aggregating results
 
+The output of step 4 is frequent itemsets for all artist shards. Because we send each listening histories to many shards, there will be a lot of duplicate itemsets. In the [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/aggregate/mapper.py) we output each itemset once for each artist in the itemset. The [reducer](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/aggregate/reducer.py) then outputs the unique patterns for each artist.
+
+To run the job
+
+    fab streaming:/hadoop/lastfm/mined/part*,/hadoop/lastfm/aggregated,/path/to/pfp_lastfm360k/aggregate/mapper.py,/path/to/pfp_lastfm360k/aggregate/reducer.py,20,20
+
+We now have the final output, 20 files in the format `(artist, frequent itemset JSON)`. To get them out of Hadoop we can use the no-headache-hadoop task `hdfs_download`
+
+    fab hdfs_download:/hadoop/lastfm/aggregated,aggregated.tsv
+
+This will pull the entire /hadoop/lastfm/aggregated directory out of HDFS using [getmerge](http://hadoop.apache.org/docs/stable/file_system_shell.html#getmerge), and then download the combined file.
+
+If we look in the file
+
+    head aggregated.tsv
+
+we should see something like
 
 
 
-## Where to go from here
+To save time (and money) we're pruning heavily, so we have only extracted 2621 itemsets from the 360,000 listening histories. If we set `MIN_SUPPORT` lower than 500 we would get more useful data back.
 
-for no-headache-hadoop, install new software through puppet (especially python libs), etc.
+
+## Writing your own jobs
+
+Now that you've seen the basics of Hadoop in action, you might want to write your own Hadoop streaming jobs. As long as you do it in Python, you should be able to follow the same approach as we've done here. If you need additional Python packages, add them to [puppet/modules/python/manifests/defaultpackages.pp](https://github.com/andreasjansson/no-headache-hadoop/blob/master/puppet/modules/python/manifests/defaultpackages.pp) in your no-headache-hadoop directory, and rebuild (`fab build`). If you're planning on writing jobs in other languages, you probably want to read up on Puppet, add a couple of manifests, and rebuild.
+
+Once you're starting to customize no-headache-hadoop it's a probably a good idea to [fork(]https://help.github.com/articles/fork-a-repo) the [repository](https://github.com/andreasjansson/no-headache-hadoop).
+
+While you're developing, first test the job locally to spot any obvious bugs. Debugging jobs running on Hadoop is trickier, but there are a few things you can do. Keep an eye on failed jobs count in the Hadoop web console.
+
+![failed jobs](images/failed_jobs.png)
+
+If you click the failed number you see a screen like this
+
+![fail stats](images/fail_stats.png)
+
+The Error field doesn't make much sense since we're using Hadoop streaming. However, if we click the Logs -> All link in the rightmost column (and \*ugh\* change the url from ip-XX-XX-XX-XX.ec2.internal to the public IP), we see the actual stderr.
+
+![error log](images/error_log.png)
+
+In this job we have a Python error, that I probably would have caught if I hadn't been lazy and run the job without testing locally first.
+
+Hadoop also provides very [basic logging](http://hadoop.apache.org/docs/r0.18.3/streaming.html#How+do+I+update+counters+in+streaming+applications%3F) by writing lines to stderr in the format
+
+    reporter:counter:GROUP,COUNTER,AMOUNT
+
+In the [mapper](https://github.com/andreasjansson/parallel-frequent-itemset-mining-lastfm360k/blob/master/aggregate/mapper.py) from step 5 there is an example of this. Counters show up in the Hadoop job console.
+
+Here are some other random things to read:
+
+ * http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/
+ * http://whyjava.wordpress.com/2011/08/04/how-i-explained-mapreduce-to-my-wife/
+ * http://hadoop.apache.org/docs/stable/mapred_tutorial.html
+ * http://mahout.apache.org/
+ * http://pig.apache.org/
+ * http://www.quora.com/What-are-some-promising-open-source-alternatives-to-Hadoop-MapReduce-for-map-reduce
+ * http://storm-project.net/
+ * http://spark.incubator.apache.org/
+ * http://star.mit.edu/cluster/
+
+----
+
+![dilbert](images/dilbert.gif)
 
 {% endraw %}
