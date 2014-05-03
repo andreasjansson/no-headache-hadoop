@@ -21,7 +21,7 @@ Make sure you have Python 2.7 [installed](https://wiki.python.org/moin/Beginners
 
 Download [headintheclouds](https://github.com/andreasjansson/head-in-the-clouds) (a tool for managing cloud servers):
 
-    pip install headintheclouds
+    pip install headintheclouds==0.1.12
 
 If you don't have root access, and you don't have pip installed, you can install the package by typing
 
